@@ -23,4 +23,4 @@ export interface DiagramSummary {
   updatedAt: string;
 }
 
-export type DiagramAction = "create" | "update" | "get" | "list" | "open";
+export type DiagramAction = "create" | "update" | "get" | "list" | "open" | "validate";

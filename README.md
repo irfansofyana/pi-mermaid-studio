@@ -14,13 +14,19 @@ The workbench keeps Mermaid source and the rendered diagram side by side. Human 
 
 ## MVP
 
-- One agent tool: `mermaid_diagram` (`create`, `update`, `get`, `list`, `open`)
+- One agent tool: `mermaid_diagram` (`validate`, `create`, `update`, `get`, `list`, `open`)
 - Project-local `.mmd` source and JSON version history under `.pi/diagrams/`
 - Conflict-safe updates with `expectedVersion`
-- Server-side Mermaid syntax validation before every saved version
+- Mermaid-native syntax validation before every saved version
+- Conservative visual-quality guidance without a second Mermaid parser
 - Localhost-only browser workbench with a capability URL
 - Mermaid source + live client-side preview
 - Direct human edits and SSE refresh when Pi changes a diagram
+- Saved-version browsing and restoration as a new draft
+- Light, dark, and system interface modes with an independent render theme
+- Zoom, pan, fit, reset, and fullscreen preview controls
+- Copy Mermaid, SVG, or PNG; download MMD, SVG, PNG, or JPG at 1×/2×/4×
+- Transparent or solid export backgrounds
 - `/mermaid [id]` command to reopen the workbench
 
 ## Install
@@ -59,6 +65,6 @@ Or run `/mermaid` to open the most recently updated diagram.
 
 The server binds to `127.0.0.1` on an ephemeral port and starts only when a diagram is created, updated, or opened. Mermaid renders in the browser; Chromium is not part of the conversational loop.
 
-## Not in v0.1
+## Deliberately out of scope
 
-PNG/PDF export, inline terminal images, visual node dragging, AI-generated variants, and MCP adapters are intentionally deferred until the Pi-first workflow proves useful.
+PDF export, inline terminal images, visual node dragging, public sharing, built-in model configuration, and MCP adapters remain outside this Pi-first release.

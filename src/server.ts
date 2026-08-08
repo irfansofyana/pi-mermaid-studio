@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { DiagramConflictError, DiagramNotFoundError, DiagramStore } from "./store.js";
 import type { DiagramRecord } from "./types.js";
 import { MermaidSyntaxError, validateMermaid } from "./validate.js";
+import { lintMermaid } from "./lint.js";
 
 const PACKAGE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const WEB_ROOT = join(PACKAGE_ROOT, "web");
@@ -77,6 +78,12 @@ export class WorkbenchServer {
         return await this.file(response, join(MERMAID_ROOT, asset), contentType);
       }
       if (method === "GET" && path === "/api/diagrams") return this.json(response, 200, await this.store.list());
+      if (method === "POST" && path === "/api/validate") {
+        const body = await this.readJson(request);
+        if (typeof body.source !== "string") return this.json(response, 400, { error: "source must be a string" });
+        await validateMermaid(body.source);
+        return this.json(response, 200, { valid: true, warnings: lintMermaid(body.source) });
+      }
       if (method === "GET" && path === "/events") return this.events(request, response);
 
       const match = path.match(/^\/api\/diagrams\/([a-z0-9-]+)$/);

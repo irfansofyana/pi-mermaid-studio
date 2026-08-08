@@ -18,10 +18,43 @@
       <div class="document-meta">
         <label class="diagram-picker-label" for="diagram-picker">Diagram</label>
         <select id="diagram-picker" aria-label="Choose a diagram"></select>
+        <label class="sr-only" for="history-picker">Version</label>
+        <select id="history-picker" class="history-picker" aria-label="View a saved version"></select>
         <span id="version" class="version">v—</span>
         <span id="connection" class="connection"><i></i> Connecting</span>
       </div>
     </header>
+
+    <nav class="instrument-rail" aria-label="Workbench controls">
+      <div class="control-group">
+        <label for="ui-theme">Interface</label>
+        <select id="ui-theme">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+        <label for="render-theme">Diagram</label>
+        <select id="render-theme">
+          <option value="studio">Studio</option>
+          <option value="default">Default</option>
+          <option value="neutral">Neutral</option>
+          <option value="forest">Forest</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+      <div class="rail-spacer"></div>
+      <div class="control-group export-group">
+        <label for="export-scale">Scale</label>
+        <select id="export-scale"><option value="1">1×</option><option value="2" selected>2×</option><option value="4">4×</option></select>
+        <label for="export-background">Background</label>
+        <select id="export-background"><option value="canvas">Canvas</option><option value="transparent">Transparent</option></select>
+        <label for="export-format">Format</label>
+        <select id="export-format"><option value="svg">SVG</option><option value="png">PNG</option><option value="jpg">JPG</option><option value="mmd">MMD</option></select>
+        <button id="download" class="rail-button primary" type="button">Download</button>
+        <button id="copy-svg" class="rail-button" type="button">Copy SVG</button>
+        <button id="copy-png" class="rail-button" type="button">Copy PNG</button>
+      </div>
+    </nav>
 
     <main class="workspace">
       <section class="pane source-pane" aria-labelledby="source-heading">
@@ -30,7 +63,10 @@
             <span class="pane-index">Source</span>
             <h2 id="source-heading">Mermaid code</h2>
           </div>
-          <button id="save" class="save-button" type="button">Save changes</button>
+          <div class="heading-actions">
+            <button id="copy-source" class="quiet-button" type="button">Copy source</button>
+            <button id="save" class="save-button" type="button">Save changes</button>
+          </div>
         </div>
         <textarea id="source" spellcheck="false" aria-label="Mermaid source code"></textarea>
         <footer class="source-footer">
@@ -45,7 +81,14 @@
             <span class="pane-index">Output</span>
             <h2 id="preview-heading">Live diagram</h2>
           </div>
-          <button id="fit" class="quiet-button" type="button">Fit view</button>
+          <div class="heading-actions view-actions" aria-label="Diagram view controls">
+            <button id="zoom-out" class="icon-button" type="button" aria-label="Zoom out">−</button>
+            <span id="zoom-level" class="zoom-level">100%</span>
+            <button id="zoom-in" class="icon-button" type="button" aria-label="Zoom in">+</button>
+            <button id="fit" class="quiet-button" type="button">Fit</button>
+            <button id="reset" class="quiet-button" type="button">Reset</button>
+            <button id="fullscreen" class="quiet-button" type="button">Fullscreen</button>
+          </div>
         </div>
         <div id="preview-wrap" class="preview-wrap">
           <div id="preview" class="preview" aria-live="polite"></div>
@@ -54,8 +97,9 @@
             <span>Write Mermaid syntax on the left.</span>
           </div>
         </div>
+        <div id="quality-panel" class="quality-panel" hidden></div>
         <footer class="preview-footer">
-          <span id="validation" class="validation">Waiting for source</span>
+          <button id="quality-toggle" class="validation" type="button" disabled>Waiting for source</button>
           <span id="render-time">— ms</span>
         </footer>
       </section>

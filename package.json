@@ -1,6 +1,6 @@
 {
   "name": "pi-mermaid-studio",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A stateful Mermaid workbench built for the Pi coding agent.",
   "type": "module",
   "license": "MIT",
@@ -16,6 +16,7 @@
     "check": "npm run typecheck && npm test"
   },
   "dependencies": {
+    "linkedom": "^0.18.12",
     "mermaid": "11.16.1"
   },
   "peerDependencies": {

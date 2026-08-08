@@ -5,6 +5,7 @@ import { openBrowser } from "../src/open.js";
 import { DiagramConflictError, DiagramNotFoundError, DiagramStore } from "../src/store.js";
 import { WorkbenchServer } from "../src/server.js";
 import { MermaidSyntaxError, validateMermaid } from "../src/validate.js";
+import { lintMermaid, type QualityWarning } from "../src/lint.js";
 
 const Parameters = Type.Object({
   action: Type.Union([
@@ -13,6 +14,7 @@ const Parameters = Type.Object({
     Type.Literal("get"),
     Type.Literal("list"),
     Type.Literal("open"),
+    Type.Literal("validate"),
   ]),
   id: Type.Optional(Type.String({ description: "Stable diagram id. Required for update/get/open." })),
   title: Type.Optional(Type.String({ description: "Human-readable diagram title." })),
@@ -30,6 +32,7 @@ interface ToolDetails {
   source?: string;
   url?: string;
   error?: string;
+  warnings?: QualityWarning[];
 }
 
 export default function mermaidStudioExtension(pi: ExtensionAPI): void {
@@ -59,12 +62,15 @@ export default function mermaidStudioExtension(pi: ExtensionAPI): void {
     name: "mermaid_diagram",
     label: "Mermaid",
     description:
-      "Create, update, retrieve, list, or open persistent Mermaid diagrams. Use complete valid Mermaid source for create/update. Diagrams are saved under .pi/diagrams in the current project.",
+      "Validate, create, update, retrieve, list, or open persistent Mermaid diagrams. Mermaid source is canonical and validated with Mermaid itself. Diagrams are saved under .pi/diagrams in the current project.",
     promptSnippet: "Create and revise persistent Mermaid diagrams with a live browser workbench.",
     promptGuidelines: [
       "Use mermaid_diagram when a diagram would explain structure or sequence better than prose.",
       "When updating, retrieve the current diagram first and pass expectedVersion to avoid overwriting human edits.",
       "Keep the source syntactically valid and use stable diagram ids from tool results.",
+      "Before create or update, use validate for unfamiliar or complex syntax. Address actionable quality warnings, but do not churn on subjective warnings for more than two revisions.",
+      "Choose the diagram type by the engineering question: sequence for interaction over time, flowchart for branching process, architecture or C4 for system boundaries, class or ER for structure, state for lifecycle, and Gantt for schedule dependencies.",
+      "Prefer short parallel labels, one clear abstraction level, restrained styling, and diagrams that answer one question. Split overloaded diagrams instead of shrinking everything.",
     ],
     parameters: Parameters,
     executionMode: "sequential",
@@ -72,6 +78,16 @@ export default function mermaidStudioExtension(pi: ExtensionAPI): void {
       const root = ctx.cwd || process.cwd();
       const store = storeFor(root);
       try {
+        if (params.action === "validate") {
+          if (!params.source?.trim()) throw new Error("validate requires complete Mermaid source.");
+          await validateMermaid(params.source);
+          const warnings = lintMermaid(params.source);
+          const text = warnings.length
+            ? `Valid Mermaid with ${warnings.length} quality suggestion${warnings.length === 1 ? "" : "s"}:\n${warnings.map((item) => `- [${item.code}] ${item.message}`).join("\n")}`
+            : "Valid Mermaid. No quality suggestions.";
+          return { content: [{ type: "text" as const, text }], details: { ok: true, action: "validate", warnings } satisfies ToolDetails };
+        }
+
         if (params.action === "list") {
           const diagrams = await store.list();
           const text = diagrams.length
@@ -83,13 +99,14 @@ export default function mermaidStudioExtension(pi: ExtensionAPI): void {
         if (params.action === "create") {
           if (!params.source?.trim()) throw new Error("create requires complete Mermaid source.");
           await validateMermaid(params.source);
+          const warnings = lintMermaid(params.source);
           const record = await store.create({ id: params.id, title: params.title || params.id || "Untitled diagram", source: params.source });
           const server = await serverFor(root);
           server.broadcast(record);
           const url = server.url(record.id);
           return {
-            content: [{ type: "text" as const, text: `Created '${record.id}' v${record.version}.\nWorkbench: ${url}\nSource: .pi/diagrams/${record.id}.mmd` }],
-            details: { ok: true, action: "create", id: record.id, title: record.title, version: record.version, source: record.source, url } satisfies ToolDetails,
+            content: [{ type: "text" as const, text: `Created '${record.id}' v${record.version}.\nWorkbench: ${url}\nSource: .pi/diagrams/${record.id}.mmd${warnings.length ? `\nQuality suggestions:\n${warnings.map((item) => `- [${item.code}] ${item.message}`).join("\n")}` : ""}` }],
+            details: { ok: true, action: "create", id: record.id, title: record.title, version: record.version, source: record.source, url, warnings } satisfies ToolDetails,
           };
         }
 
@@ -97,6 +114,7 @@ export default function mermaidStudioExtension(pi: ExtensionAPI): void {
         if (params.action === "update") {
           if (!params.source?.trim()) throw new Error("update requires complete Mermaid source.");
           await validateMermaid(params.source);
+          const warnings = lintMermaid(params.source);
           const record = await store.update(params.id, {
             source: params.source,
             title: params.title,
@@ -108,8 +126,8 @@ export default function mermaidStudioExtension(pi: ExtensionAPI): void {
           server.broadcast(record);
           const url = server.url(record.id);
           return {
-            content: [{ type: "text" as const, text: `Updated '${record.id}' to v${record.version}.\nWorkbench: ${url}` }],
-            details: { ok: true, action: "update", id: record.id, title: record.title, version: record.version, source: record.source, url } satisfies ToolDetails,
+            content: [{ type: "text" as const, text: `Updated '${record.id}' to v${record.version}.\nWorkbench: ${url}${warnings.length ? `\nQuality suggestions:\n${warnings.map((item) => `- [${item.code}] ${item.message}`).join("\n")}` : ""}` }],
+            details: { ok: true, action: "update", id: record.id, title: record.title, version: record.version, source: record.source, url, warnings } satisfies ToolDetails,
           };
         }
 

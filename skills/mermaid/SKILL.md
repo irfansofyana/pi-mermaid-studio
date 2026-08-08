@@ -1,19 +1,30 @@
 ---
-name: mermaid-studio
-description: Create and revise Mermaid diagrams with persistent project-local files and a live browser workbench. Use when a diagram will make architecture, sequence, state, hierarchy, or flow clearer.
+name: "pi-mermaid-studio"
+description: "Guide Pi models to author validated, intentional engineering diagrams in raw Mermaid."
 ---
 
 # Mermaid Studio
 
-Use the `mermaid_diagram` tool to create and maintain diagrams.
+Author raw Mermaid diagrams that are technically accurate, visually intentional, and compatible with the Mermaid version bundled by Pi Mermaid Studio.
 
 ## Workflow
 
-1. Choose the Mermaid diagram type that best communicates the relationship.
-2. Call `mermaid_diagram` with `action: "create"`, a short stable id, a clear title, and complete Mermaid source.
-3. Tell the user the diagram id and offer the returned workbench URL.
-4. Before updating, call `get` and use its current `version` as `expectedVersion`.
-5. Call `update` with complete revised source and a concise change summary.
-6. If a version conflict occurs, retrieve the latest source and reconcile the requested change.
+1. Identify the engineering question and audience.
+2. Read `references/choosing-the-right-diagram.md`.
+3. Load only the matching diagram guide plus `references/visual-quality.md`. Read `references/syntax-safety.md` when using unfamiliar or experimental syntax.
+4. Inspect the available evidence. Never invent services, relationships, states, dates, or cardinalities.
+5. Write complete raw Mermaid. Mermaid is the only canonical language; do not introduce a separate schema or DSL.
+6. Call `mermaid_diagram` with `action: "validate"`.
+7. Fix every syntax error. Address quality warnings that materially improve the diagram, but stop after at most two subjective refinement passes.
+8. Create the diagram. For updates, retrieve it first and pass `expectedVersion`.
+9. Open the workbench when visual review or export is useful.
 
-Prefer sequence diagrams for time-ordered interactions, flowcharts for branching processes, state diagrams for lifecycle transitions, and class/ER diagrams for structural models. Keep labels concise. Do not invent services, states, or relationships that the user did not establish.
+## Core rules
+
+- One diagram should answer one clear question at one abstraction level.
+- Prefer short, parallel labels and meaningful identifiers.
+- Use structure before decoration: direction, grouping, ordering, and whitespace.
+- Use one accent plus neutral colors; reserve semantic colors for real meaning.
+- Split overloaded diagrams instead of shrinking labels or adding more styling.
+- Unknown syntax accepted by the pinned Mermaid parser is valid; advisory lint must never act as a second parser.
+- C4 is experimental in Mermaid. State that limitation when choosing it.

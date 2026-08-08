@@ -19,6 +19,7 @@ The workbench keeps Mermaid source and the rendered diagram side by side. Human 
 - Conflict-safe updates with `expectedVersion`
 - Mermaid-native syntax validation before every saved version
 - Conservative visual-quality guidance without a second Mermaid parser
+- Bundled engineering skill router with focused guides for sequence, flowchart, architecture, C4, class, ER, state, and Gantt
 - Localhost-only browser workbench with a capability URL
 - Mermaid source + live client-side preview
 - Direct human edits and SSE refresh when Pi changes a diagram
@@ -64,6 +65,8 @@ Or run `/mermaid` to open the most recently updated diagram.
 ```
 
 The server binds to `127.0.0.1` on an ephemeral port and starts only when a diagram is created, updated, or opened. Mermaid renders in the browser; Chromium is not part of the conversational loop.
+
+The bundled skill loads only the relevant diagram guide plus shared visual-quality guidance. Raw Mermaid remains canonical, and the extension's `validate` action closes the syntax and quality-revision loop.
 
 ## Deliberately out of scope
 

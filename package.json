@@ -1,14 +1,30 @@
 {
   "name": "pi-mermaid-studio",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A stateful Mermaid workbench built for the Pi coding agent.",
   "type": "module",
   "license": "MIT",
-  "keywords": ["pi-package", "pi", "mermaid", "diagram"],
-  "files": ["extensions", "src", "web", "skills", "README.md", "LICENSE"],
+  "keywords": [
+    "pi-package",
+    "pi",
+    "mermaid",
+    "diagram"
+  ],
+  "files": [
+    "extensions",
+    "src",
+    "web",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
   "pi": {
-    "extensions": ["./extensions/index.ts"],
-    "skills": ["./skills"]
+    "extensions": [
+      "./extensions/index.ts"
+    ],
+    "skills": [
+      "./skills"
+    ]
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

@@ -1,4 +1,4 @@
-import mermaid from "./mermaid.mjs";
+import mermaid from "./vendor/mermaid/mermaid.esm.min.mjs";
 
 mermaid.initialize({
   startOnLoad: false,

@@ -43,6 +43,16 @@ describe("Pi extension vertical slice", () => {
     expect(page.status).toBe(200);
     expect(await page.text()).toContain("Mermaid Studio");
 
+    const moduleUrl = new URL("vendor/mermaid/mermaid.esm.min.mjs", created.details.url);
+    const mermaidModule = await fetch(moduleUrl);
+    expect(mermaidModule.status).toBe(200);
+    expect(mermaidModule.headers.get("content-type")).toContain("text/javascript");
+
+    const chunkName = (await mermaidModule.text()).match(/\.\/chunks\/mermaid\.esm\.min\/[a-zA-Z0-9_.-]+\.mjs/)?.[0];
+    expect(chunkName).toBeDefined();
+    const chunk = await fetch(new URL(chunkName!, moduleUrl));
+    expect(chunk.status).toBe(200);
+
     const updated = await tool.execute(
       "call-2",
       {

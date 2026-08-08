@@ -10,7 +10,7 @@ import { MermaidSyntaxError, validateMermaid } from "./validate.js";
 
 const PACKAGE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const WEB_ROOT = join(PACKAGE_ROOT, "web");
-const MERMAID_MODULE = join(PACKAGE_ROOT, "node_modules", "mermaid", "dist", "mermaid.esm.min.mjs");
+const MERMAID_ROOT = join(PACKAGE_ROOT, "node_modules", "mermaid", "dist");
 
 type EventClient = ServerResponse;
 
@@ -66,7 +66,16 @@ export class WorkbenchServer {
       if (method === "GET" && path === "/") return await this.file(response, join(WEB_ROOT, "index.html"), "text/html; charset=utf-8");
       if (method === "GET" && path === "/studio.css") return await this.file(response, join(WEB_ROOT, "studio.css"), "text/css; charset=utf-8");
       if (method === "GET" && path === "/studio.js") return await this.file(response, join(WEB_ROOT, "studio.js"), "text/javascript; charset=utf-8");
-      if (method === "GET" && path === "/mermaid.mjs") return await this.file(response, MERMAID_MODULE, "text/javascript; charset=utf-8");
+      if (method === "GET" && path.startsWith("/vendor/mermaid/")) {
+        const asset = path.slice("/vendor/mermaid/".length);
+        if (!asset || asset.includes("..") || !/^[a-zA-Z0-9_./-]+$/.test(asset)) return this.text(response, 404, "Not found");
+        const contentType = asset.endsWith(".wasm")
+          ? "application/wasm"
+          : asset.endsWith(".json")
+            ? "application/json; charset=utf-8"
+            : "text/javascript; charset=utf-8";
+        return await this.file(response, join(MERMAID_ROOT, asset), contentType);
+      }
       if (method === "GET" && path === "/api/diagrams") return this.json(response, 200, await this.store.list());
       if (method === "GET" && path === "/events") return this.events(request, response);
 

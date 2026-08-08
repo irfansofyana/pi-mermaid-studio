@@ -2,6 +2,16 @@
 
 A stateful Mermaid workbench for Pi: the agent creates and revises diagrams, while you edit Mermaid source beside a live browser preview.
 
+## Demo
+
+Ask Pi to create or open a diagram. The extension exposes one compact tool and returns a capability-protected localhost workbench URL.
+
+![Pi creating and opening a Mermaid diagram](assets/screenshots/pi-mermaid-studio-tui.png)
+
+The workbench keeps Mermaid source and the rendered diagram side by side. Human edits are validated, versioned, and synchronized back to the active Pi session.
+
+![Mermaid source and live sequence diagram in the browser workbench](assets/screenshots/pi-mermaid-studio-workbench.png)
+
 ## MVP
 
 - One agent tool: `mermaid_diagram` (`create`, `update`, `get`, `list`, `open`)
@@ -13,7 +23,19 @@ A stateful Mermaid workbench for Pi: the agent creates and revises diagrams, whi
 - Direct human edits and SSE refresh when Pi changes a diagram
 - `/mermaid [id]` command to reopen the workbench
 
-## Try it locally
+## Install
+
+```bash
+pi install git:github.com/irfansofyana/pi-mermaid-studio
+```
+
+Try it for one session without installing:
+
+```bash
+pi -e git:github.com/irfansofyana/pi-mermaid-studio
+```
+
+## Develop locally
 
 ```bash
 npm install

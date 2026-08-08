@@ -4,9 +4,9 @@ A stateful Mermaid workbench for Pi: the agent creates and revises diagrams, whi
 
 ## Demo
 
-Ask Pi to create or open a diagram. The extension exposes one compact tool and returns a capability-protected localhost workbench URL.
+Ask Pi to create or open a diagram. This real Kimi K2.6 session shows the bundled skill loading focused guidance, then the extension validating, creating, and opening the diagram through one compact tool.
 
-![Pi creating and opening a Mermaid diagram](assets/screenshots/pi-mermaid-studio-tui.png)
+![Pi loading the Mermaid Studio skill, validating a generated diagram, creating it, and opening the workbench](assets/screenshots/pi-mermaid-studio-tui.png)
 
 The workbench keeps Mermaid source and the rendered diagram side by side. Human edits are validated, versioned, and synchronized back to the active Pi session.
 

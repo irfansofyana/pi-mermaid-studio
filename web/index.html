@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mermaid Studio</title>
+    <link rel="stylesheet" href="./studio.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <div>
+          <p>Pi extension</p>
+          <h1>Mermaid Studio</h1>
+        </div>
+      </div>
+      <div class="document-meta">
+        <label class="diagram-picker-label" for="diagram-picker">Diagram</label>
+        <select id="diagram-picker" aria-label="Choose a diagram"></select>
+        <span id="version" class="version">v—</span>
+        <span id="connection" class="connection"><i></i> Connecting</span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="pane source-pane" aria-labelledby="source-heading">
+        <div class="pane-heading">
+          <div>
+            <span class="pane-index">Source</span>
+            <h2 id="source-heading">Mermaid code</h2>
+          </div>
+          <button id="save" class="save-button" type="button">Save changes</button>
+        </div>
+        <textarea id="source" spellcheck="false" aria-label="Mermaid source code"></textarea>
+        <footer class="source-footer">
+          <span id="save-state">Ready</span>
+          <span><kbd>⌘</kbd><kbd>S</kbd> save</span>
+        </footer>
+      </section>
+
+      <section class="pane preview-pane" aria-labelledby="preview-heading">
+        <div class="pane-heading">
+          <div>
+            <span class="pane-index">Output</span>
+            <h2 id="preview-heading">Live diagram</h2>
+          </div>
+          <button id="fit" class="quiet-button" type="button">Fit view</button>
+        </div>
+        <div id="preview-wrap" class="preview-wrap">
+          <div id="preview" class="preview" aria-live="polite"></div>
+          <div id="empty" class="empty-state" hidden>
+            <strong>Nothing to render yet.</strong>
+            <span>Write Mermaid syntax on the left.</span>
+          </div>
+        </div>
+        <footer class="preview-footer">
+          <span id="validation" class="validation">Waiting for source</span>
+          <span id="render-time">— ms</span>
+        </footer>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./studio.js"></script>
+  </body>
+</html>
